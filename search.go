@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"net/url"
-	"os"
 	"strings"
 )
+
+var flagSearchN uint = 1
 
 type searchID struct {
 	Kind, ChannelID, VideoID, PlaylistID string
@@ -22,25 +22,44 @@ type searchResponse struct {
 	Items []searchItem
 }
 
-func search(arg ...string) {
-	log.SetPrefix(fmt.Sprintf("%s: search: ", os.Args[0]))
-	query := strings.Join(arg, " ")
-	addr := fmt.Sprintf(
-		"%s/search?key=%s&part=id&maxResults=1&q=%s&type=video",
-		apiRoot, apiKey, url.QueryEscape(query))
-
-	resp, err := http.Get(addr)
-	if err != nil {
-		log.Fatal(err)
+func search(args []string) {
+	if flagSearchN > 50 {
+		log.Fatal("-n option must be in the range [0, 50]")
 	}
-	defer resp.Body.Close()
+
+	query := strings.Join(args, " ")
+	addr := fmt.Sprintf(
+		"%s/search?key=%s&part=id&maxResults=%d&q=%s&type=video",
+		apiRoot, apiKey, flagSearchN, url.QueryEscape(query))
 
 	var v searchResponse
-	if err := json.NewDecoder(resp.Body).Decode(&v); err != nil {
-		log.Fatal(err)
-	}
+	decodeResponse(addr, &v)
 
 	for _, item := range v.Items {
 		fmt.Printf("https://www.youtube.com/watch?v=%s\n", item.ID.VideoID)
 	}
+}
+
+func init() {
+	cmd := &command{
+		name:    "search",
+		summary: "print the URLs of videos matching a query",
+		usage:   "[<option>]... <query>...",
+		description: `
+Search YouTube for <query> (joined by spaces if multiple arguments are
+given) and print the URLs of the top matches in descending order by
+relevance.
+`,
+		function: search,
+		minArgs:  1,
+		maxArgs:  -1,
+		hasOpts:  true,
+	}
+
+	cmd.flagSet = flag.NewFlagSet(cmd.name, flag.ExitOnError)
+	cmd.flagSet.Usage = usageFunc(cmd)
+	cmd.flagSet.UintVar(&flagSearchN, "n", flagSearchN,
+		"maximum number of results, in the range [0, 50]")
+
+	commands[cmd.name] = cmd
 }

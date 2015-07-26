@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 )
 
@@ -27,9 +25,8 @@ type videosResponse struct {
 	Items []videosItem
 }
 
-func title(arg string) {
-	log.SetPrefix(fmt.Sprintf("%s: title: ", os.Args[0]))
-	match := idRegexp.FindStringSubmatch(arg)
+func title(args []string) {
+	match := idRegexp.FindStringSubmatch(args[0])
 	if match == nil {
 		log.Fatal("invalid video URL")
 	}
@@ -37,18 +34,29 @@ func title(arg string) {
 	addr := fmt.Sprintf("%s/videos?key=%s&id=%s&part=snippet", apiRoot, apiKey,
 		url.QueryEscape(id))
 
-	resp, err := http.Get(addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
 	var v videosResponse
-	if err := json.NewDecoder(resp.Body).Decode(&v); err != nil {
-		log.Fatal(err)
-	}
+	decodeResponse(addr, &v)
 
 	for _, item := range v.Items {
 		fmt.Println(item.Snippet.Title)
 	}
+}
+
+func init() {
+	cmd := &command{
+		name:    "title",
+		summary: "print the title of a video at a URL",
+		usage:   "<url>",
+		description: `
+Print the title of the video at <url>.
+`,
+		function: title,
+		minArgs:  1,
+		maxArgs:  1,
+	}
+
+	cmd.flagSet = flag.NewFlagSet(cmd.name, flag.ExitOnError)
+	cmd.flagSet.Usage = usageFunc(cmd)
+
+	commands[cmd.name] = cmd
 }
