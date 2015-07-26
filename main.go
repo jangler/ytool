@@ -15,13 +15,14 @@ const (
 )
 
 const description = `
-A command-line interface to the YouTube data API. If no command-line
-arguments are specified for a command that requires arguments, arguments
+A command-line interface to the YouTube data API. If not enough
+command-line arguments are specified for a command, remaining arguments
 are read from standard input.
 `
 
 const commands = `
   search <query>...  print the top URL matching <query>
+  title <url>        print the title of the video at <url>
 `
 
 func parseFlags() {
@@ -38,13 +39,12 @@ func parseFlags() {
 	}
 }
 
-func readStdin() []string {
+func readStdin(args []string, max int) []string {
 	r := bufio.NewReader(os.Stdin)
-	args := []string{}
-	for {
+	for max < 0 || len(args) < max {
 		line, err := r.ReadString('\n')
 		if len(line) > 0 {
-			args = append(args, string(line))
+			args = append(args, string(line[:len(line)-1]))
 		}
 		if err == io.EOF {
 			break
@@ -55,22 +55,32 @@ func readStdin() []string {
 	return args
 }
 
+func getArgs(cmd string, min, max int) []string {
+	args := flag.Args()[1:]
+	if max >= 0 && len(args) > max {
+		fmt.Fprintf(os.Stderr, "%s: %s: too many arguments\n", os.Args[0], cmd)
+		os.Exit(2)
+	}
+	if len(args) < min {
+		args = readStdin(args, max)
+	}
+	if len(args) < min {
+		fmt.Fprintf(os.Stderr, "%s: %s: missing query argument\n", os.Args[0],
+			cmd)
+		os.Exit(2)
+	}
+	return args
+}
+
 func main() {
 	log.SetFlags(0)
 	log.SetPrefix(fmt.Sprintf("%s: ", os.Args[0]))
 	parseFlags()
-	args := flag.Args()[1:]
 	switch flag.Arg(0) {
 	case "search":
-		if len(args) < 1 {
-			args = readStdin()
-		}
-		if len(args) < 1 {
-			fmt.Fprintf(os.Stderr, "%s: search: missing query argument\n",
-				os.Args[0])
-			os.Exit(2)
-		}
-		search(args...)
+		search(getArgs("search", 1, -1)...)
+	case "title":
+		title(getArgs("title", 1, 1)[0])
 	default:
 		fmt.Fprintf(os.Stderr, "%s: no such command: %s\n", os.Args[0],
 			flag.Arg(0))

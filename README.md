@@ -18,12 +18,19 @@ Usage
 -----
 	Usage: ytool <cmd> [<arg>]...
 
-	A command-line interface to the YouTube data API. If no command-line
-	arguments are specified for a command that requires arguments, arguments
+	A command-line interface to the YouTube data API. If not enough
+	command-line arguments are specified for a command, remaining arguments
 	are read from standard input.
 
 	Commands:
 	  search <query>...  print the top URL matching <query>
+	  title <url>        print the title of the video at <url>
+
+Examples
+--------
+	$ ytool search ilkae | tee >(ytool title)
+	https://youtube.com/watch?v=tCIJPYB3xUU
+	Ilkae - Ampersand
 
 License
 -------
