@@ -61,17 +61,11 @@ Examples
 	$ ytool search -type=video ilkae | tee >(ytool title)
 	https://youtube.com/watch?v=tCIJPYB3xUU
 	Ilkae - Ampersand
-	$ ytool search -type=playlist this heat deceit | ytool playlist
-	https://www.youtube.com/watch?v=IDAr24H-tKU
-	https://www.youtube.com/watch?v=MDq9YHcIip0
-	https://www.youtube.com/watch?v=DX-3H3QqwAc
-	https://www.youtube.com/watch?v=P0eVTeQi06c
-	https://www.youtube.com/watch?v=qu2T1JJTN1U
-	https://www.youtube.com/watch?v=n0ySaCs-zJk
-	https://www.youtube.com/watch?v=lzZMhAM2SqU
-	https://www.youtube.com/watch?v=kAH9u5pXY_Y
-	https://www.youtube.com/watch?v=NLMoDU9Tl_E
-	https://www.youtube.com/watch?v=e8ztxKXnqwI
+	$ ytool search -type=playlist can future days | ytool playlist
+	https://www.youtube.com/watch?v=VbAmpn-_yEk
+	https://www.youtube.com/watch?v=7za3-tbYtPU
+	https://www.youtube.com/watch?v=Rac1sLmyIPc
+	https://www.youtube.com/watch?v=ThV4wwYSvHY
 
 License
 -------
