@@ -11,7 +11,7 @@ import (
 )
 
 var idRegexp = regexp.MustCompile(
-	`^https?://youtu(be\.com/watch\?v=|\.be/)(.+)$`)
+	`^https?://(www\.)?youtu(be\.com/watch\?v=|\.be/)(.+)$`)
 
 type videosSnippet struct {
 	ChannelID, Title, Description, CategoryID string
@@ -33,7 +33,7 @@ func title(arg string) {
 	if match == nil {
 		log.Fatal("invalid video URL")
 	}
-	id := match[2]
+	id := match[3]
 	addr := fmt.Sprintf("%s/videos?key=%s&id=%s&part=snippet", apiRoot, apiKey,
 		url.QueryEscape(id))
 

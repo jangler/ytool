@@ -1,6 +1,6 @@
 ytool
 =====
-A command-line interface to the YouTube Data API.
+A command-line interface to the YouTube data API.
 
 Status
 ------

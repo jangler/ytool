@@ -41,6 +41,6 @@ func search(arg ...string) {
 	}
 
 	for _, item := range v.Items {
-		fmt.Printf("https://youtube.com/watch?v=%s\n", item.ID.VideoID)
+		fmt.Printf("https://www.youtube.com/watch?v=%s\n", item.ID.VideoID)
 	}
 }
