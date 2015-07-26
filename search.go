@@ -9,13 +9,19 @@ import (
 )
 
 var flagSearchN uint = 1
+var flagSearchType = "video,channel,playlist"
 
 type searchID struct {
-	Kind, ChannelID, VideoID, PlaylistID string
+	Kind, VideoID, PlaylistID string
+}
+
+type searchSnippet struct {
+	ChannelTitle string
 }
 
 type searchItem struct {
-	ID searchID
+	ID      searchID
+	Snippet searchSnippet
 }
 
 type searchResponse struct {
@@ -29,14 +35,26 @@ func search(args []string) {
 
 	query := strings.Join(args, " ")
 	addr := fmt.Sprintf(
-		"%s/search?key=%s&part=id&maxResults=%d&q=%s&type=video",
-		apiRoot, apiKey, flagSearchN, url.QueryEscape(query))
+		"%s/search?key=%s&part=snippet&maxResults=%d&q=%s&type=%s",
+		apiRoot, apiKey, flagSearchN, url.QueryEscape(query),
+		url.QueryEscape(flagSearchType))
 
 	var v searchResponse
 	decodeResponse(addr, &v)
 
 	for _, item := range v.Items {
-		fmt.Printf("https://www.youtube.com/watch?v=%s\n", item.ID.VideoID)
+		switch item.ID.Kind {
+		case "youtube#channel":
+			fmt.Printf("https://www.youtube.com/user/%s\n",
+				item.Snippet.ChannelTitle)
+		case "youtube#playlist":
+			fmt.Printf("https://www.youtube.com/playlist?list=%s\n",
+				item.ID.PlaylistID)
+		case "youtube#video":
+			fmt.Printf("https://www.youtube.com/watch?v=%s\n", item.ID.VideoID)
+		default:
+			fmt.Printf("Unknown item type: %s\n", item.ID.Kind)
+		}
 	}
 }
 
@@ -60,6 +78,8 @@ relevance.
 	cmd.flagSet.Usage = usageFunc(cmd)
 	cmd.flagSet.UintVar(&flagSearchN, "n", flagSearchN,
 		"maximum number of results, in the range [0, 50]")
+	cmd.flagSet.StringVar(&flagSearchType, "type", flagSearchType,
+		"restrict search to given resource types")
 
 	commands[cmd.name] = cmd
 }

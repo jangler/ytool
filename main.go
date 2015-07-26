@@ -57,6 +57,10 @@ func decodeResponse(addr string, v interface{}) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		log.Fatal(resp.Status)
+	}
+
 	if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
 		log.Fatal(err)
 	}
