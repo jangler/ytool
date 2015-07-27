@@ -61,7 +61,7 @@ func search(args []string) {
 func init() {
 	cmd := &command{
 		name:    "search",
-		summary: "print the URLs of videos matching a query",
+		summary: "print the URLs of resources matching a query",
 		usage:   "[<option>]... <query>...",
 		description: `
 Search YouTube for <query> (joined by spaces if multiple arguments are

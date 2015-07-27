@@ -28,8 +28,8 @@ Usage
 
 	Commands:
 	  playlist  print the URLs of videos in a playlist
-	  search    print the URLs of videos matching a query
-	  title     print the title of a video at a URL
+	  search    print the URLs of resources matching a query
+	  title     print the title of a video or playlist at a URL
 
 **ytool playlist**
 
@@ -54,7 +54,7 @@ Usage
 
 	Usage: ytool title <url>
 
-	Print the title of the video at <url>.
+	Print the title of the video or playlist at <url>.
 
 Examples
 --------
