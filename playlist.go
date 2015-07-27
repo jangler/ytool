@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/url"
 	"regexp"
+
+	"github.com/jangler/minipkg/tool"
 )
 
 var playlistRegexp = regexp.MustCompile(
@@ -42,21 +44,21 @@ func playlist(args []string) {
 }
 
 func init() {
-	cmd := &command{
-		name:    "playlist",
-		summary: "print the URLs of videos in a playlist",
-		usage:   "<url>",
-		description: `
+	cmd := &tool.Command{
+		Name:    "playlist",
+		Summary: "print the URLs of videos in a playlist",
+		Usage:   "<url>",
+		Description: `
 Print the URLs of the videos in the playlist at <url>, up to a maximum
 of 50 videos.
 `,
-		function: playlist,
-		minArgs:  1,
-		maxArgs:  1,
+		Function: playlist,
+		MinArgs:  1,
+		MaxArgs:  1,
 	}
 
-	cmd.flagSet = flag.NewFlagSet(cmd.name, flag.ExitOnError)
-	cmd.flagSet.Usage = usageFunc(cmd)
+	cmd.FlagSet = flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+	cmd.FlagSet.Usage = tool.UsageFunc(cmd)
 
-	commands[cmd.name] = cmd
+	tool.Commands[cmd.Name] = cmd
 }

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/url"
 	"regexp"
+
+	"github.com/jangler/minipkg/tool"
 )
 
 var videoRegexp = regexp.MustCompile(
@@ -74,20 +76,20 @@ func title(args []string) {
 }
 
 func init() {
-	cmd := &command{
-		name:    "title",
-		summary: "print the title of a video or playlist at a URL",
-		usage:   "<url>",
-		description: `
+	cmd := &tool.Command{
+		Name:    "title",
+		Summary: "print the title of a video or playlist at a URL",
+		Usage:   "<url>",
+		Description: `
 Print the title of the video or playlist at <url>.
 `,
-		function: title,
-		minArgs:  1,
-		maxArgs:  1,
+		Function: title,
+		MinArgs:  1,
+		MaxArgs:  1,
 	}
 
-	cmd.flagSet = flag.NewFlagSet(cmd.name, flag.ExitOnError)
-	cmd.flagSet.Usage = usageFunc(cmd)
+	cmd.FlagSet = flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+	cmd.FlagSet.Usage = tool.UsageFunc(cmd)
 
-	commands[cmd.name] = cmd
+	tool.Commands[cmd.Name] = cmd
 }

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/url"
 	"strings"
+
+	"github.com/jangler/minipkg/tool"
 )
 
 var flagSearchN uint = 1
@@ -59,27 +61,27 @@ func search(args []string) {
 }
 
 func init() {
-	cmd := &command{
-		name:    "search",
-		summary: "print the URLs of resources matching a query",
-		usage:   "[<option>]... <query>...",
-		description: `
+	cmd := &tool.Command{
+		Name:    "search",
+		Summary: "print the URLs of resources matching a query",
+		Usage:   "[<option>]... <query>...",
+		Description: `
 Search YouTube for <query> (joined by spaces if multiple arguments are
 given) and print the URLs of the top matches in descending order by
 relevance.
 `,
-		function: search,
-		minArgs:  1,
-		maxArgs:  -1,
-		hasOpts:  true,
+		Function: search,
+		MinArgs:  1,
+		MaxArgs:  -1,
+		HasOpts:  true,
 	}
 
-	cmd.flagSet = flag.NewFlagSet(cmd.name, flag.ExitOnError)
-	cmd.flagSet.Usage = usageFunc(cmd)
-	cmd.flagSet.UintVar(&flagSearchN, "n", flagSearchN,
+	cmd.FlagSet = flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+	cmd.FlagSet.Usage = tool.UsageFunc(cmd)
+	cmd.FlagSet.UintVar(&flagSearchN, "n", flagSearchN,
 		"maximum number of results, in the range [0, 50]")
-	cmd.flagSet.StringVar(&flagSearchType, "type", flagSearchType,
+	cmd.FlagSet.StringVar(&flagSearchType, "type", flagSearchType,
 		"restrict search to given resource types")
 
-	commands[cmd.name] = cmd
+	tool.Commands[cmd.Name] = cmd
 }
